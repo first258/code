@@ -9,7 +9,11 @@ import socket
 class BasicSpider(scrapy.Spider):
 	name="basic"
 	allowed_domains=["web"]
-	start_urls=[i.strip() for i in open('todo.URL.txt').readlines()]
+	start_urls=(
+			'http://web:9312/properties/property_000000.html',
+			'http://web:9312/properties/property_000001.html',
+			'http://web:9312/properties/property_000002.html',
+	)
 	
 	def parse(self,response):
 		""" This function parses a property page.

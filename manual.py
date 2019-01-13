@@ -1,17 +1,29 @@
 import scrapy
-from my1.items import PropertiesItem
-from scrapy.loader import ItemLoader
-from scrapy.loader.processors import MapCompose,Join
 import urlparse
 import datetime
 import socket
 
+from scrapy.loader import ItemLoader
+from scrapy.loader.processors import MapCompose,Join
+from scrapy.http import Request
+
+from my1.items import PropertiesItem
+
 class BasicSpider(scrapy.Spider):
-	name="basic"
+	name="manual"
 	allowed_domains=["web"]
-	start_urls=[i.strip() for i in open('todo.URL.txt').readlines()]
+	start_urls=('http://web:9312/properties/index_00000.html',)
 	
 	def parse(self,response):
+		next_selector=response.xpath('//*[contains(@class,"next")]//@href')
+		for url in next_selector.extract():
+			yield Request(urlparse.urljoin(response.url,url))
+
+		item_selector=response.xpath('//*[@itemprop="url"]/@href')
+		for url in item_selector.extract():
+			yield Request(urlparse.urljoin(response.url,url),callback=self.parse_item)
+
+	def parse_item(self,response):
 		""" This function parses a property page.
 
 		@url http://web:9312/properties/property_000000.html

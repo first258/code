@@ -1,8 +1,8 @@
-import scrapy
 import urlparse
 import datetime
 import socket
 
+import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose,Join
 from scrapy.http import Request
